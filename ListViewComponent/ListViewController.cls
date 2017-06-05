@@ -2,7 +2,7 @@ public virtual class ListViewController {
     // Constants
     private final Integer cookieExpiration = 22592000;
     private final Integer defaultPageSize = 25;
-    private final pageSizeCookieName = 'pageSize';
+    private final String pageSizeCookieName = 'pageSize';
     
     // Properties with standard getters/setters
     private String oldQuery {get; set;} // Used to determine if the query changges
@@ -12,6 +12,7 @@ public virtual class ListViewController {
     private transient Cookie pageSizeCookie;
     
     // Properties with Custom getters/setters
+    
     /*
      * Stores the query passed to the component via it's attribute and assign it
      * to the internal query variable.
@@ -43,7 +44,7 @@ public virtual class ListViewController {
         set {
             queryAttr = value;
             
-            if (queryAtter != oldQuery || query == null) {
+            if (queryAttr != oldQuery || query == null) {
                 query = queryAttr;
                 oldQuery = queryAttr;
             }
@@ -63,7 +64,7 @@ public virtual class ListViewController {
         
         set {
             query = value;
-            setCon = new ApexPages.StandardSetController(atabase.getQueryLocator(query));
+            setCon = new ApexPages.StandardSetController(Database.getQueryLocator(query));
         }
     }
     
@@ -104,7 +105,7 @@ public virtual class ListViewController {
             pageSize = value;
             pageSizeCookie = new Cookie('pageSize', string.valueOf(pageSize), null, cookieExpiration, false);
             getCookieMap().put('pageSize', pageSizeCookie);
-            ApexPages.currentPage().setCookies(cookieMap.values();
+            ApexPages.currentPage().setCookies(cookieMap.values());
             setConPageSize(pageSize);
         }
     }
@@ -158,7 +159,7 @@ public virtual class ListViewController {
                 Integer locStart = query.indexOf('ORDER BY');
                 
                 if (locStart >= 0) {
-                    String queryEnd = query.subString(loctStart + 9);
+                    String queryEnd = query.subString(locStart + 9);
                     Integer locEnd = queryEnd.indexOf(' ');
                     
                     if (locEnd > 0) {
@@ -270,17 +271,17 @@ public virtual class ListViewController {
      * wrap the records as needed for display to the page.
      * </p>
      */
-    public virtual void resetList() {}
+    public virtual void resetRecordList() {}
     
     // SetCon overrides
-    // Calls resetList after every setCon action
+    // Calls resetRecordList after every setCon action
     
     /*
      * Override the default next() method of setCon
      */
     public void setConNext() {
         setCon.next();
-        resetList();
+        resetRecordList();
     }
     
     /*
@@ -288,7 +289,7 @@ public virtual class ListViewController {
      */
     public void setConPrev() {
         setCon.previous();
-        resetList();
+        resetRecordList();
     }
     
     /*
@@ -296,6 +297,6 @@ public virtual class ListViewController {
      */
     public void setConPageSize(integer newSize) {
         setCon.setPageSize(newSize);
-        resetList();
+        resetRecordList();
     }
 }
