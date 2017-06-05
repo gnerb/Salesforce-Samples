@@ -199,6 +199,7 @@ public virtual class ListViewController {
                 }
                 
                 tempQuery = tempQuery + ' ORDER BY ' + sortField + ' ' + sortDir + ' NULLS LAST';
+                system.debug(tempQuery);
                 query = tempQuery;
             }
         }

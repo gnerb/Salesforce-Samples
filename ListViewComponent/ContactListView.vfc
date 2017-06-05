@@ -1,0 +1,17 @@
+<apex:component controller="contactListViewController">
+    <apex:attribute name="queryString" type="String" description="" assignTo="{!queryAttr}"/>
+    
+    <apex:form id="listView">
+        <apex:dataTable value="{!contacts}" var="c">
+            <apex:column>
+                {!c.name}
+                <apex:facet name="header">
+                    <apex:commandLink reRender="listView">
+                        <apex:param name="contactName" assignTo="{!sortField}" value="Name"/>
+                        Name&nbsp;
+                    </apex:commandLink>
+                </apex:facet>
+            </apex:column>
+        </apex:dataTable>
+    </apex:form>
+</apex:component>
