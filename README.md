@@ -1,6 +1,6 @@
 # Salesforce Samples
 
-#ListViewController
+# ListViewController
 A virtual class that provides most functionality required to create custom, paginated list views in Visualforce.
 
 This is a versitile code sample that demonstrates the follow:
