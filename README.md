@@ -13,7 +13,7 @@ behaviors
 -Dynamic components that can be re-used to display multiple data sets
 
 # Simple Contact Sample
-An extention of the lsitViewController that displays a sortable, 1 column, data
+An extention of the listViewController that displays a sortable, 1 column, data
 listing contact names limited to 25 records (the default page size)
 
 # Extended Contact Sample
