@@ -3,13 +3,15 @@
  * display a paginated list view of contacts.
  */
 public class contactListViewController extends ListViewController {
-    public List<Contact> contacts {get; set;}
-    
-    public override void resetRecordList() {
-        contacts = new List<Contact>();
-        
-        for (SObject so : setCon.getRecords()) {
-            contacts.add((Contact) so);
+    /*
+     * Handles typecasting generic SObjects into objects of the desired
+     * type.
+     */
+    public List<Contact> contacts {
+        get {
+            return (List<Contact>) recordList;
         }
+        
+        set;
     }
 }

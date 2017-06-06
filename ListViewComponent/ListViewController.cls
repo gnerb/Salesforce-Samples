@@ -6,6 +6,7 @@ public virtual class ListViewController {
     
     // Properties with standard getters/setters
     private String oldQuery {get; set;} // Used to determine if the query changges
+    public List<SObject> recordList {get; set;} // Stores the standard record list
     
     // Transient properties (cookies cannot be stored in the view state)
     private transient Map<String, Cookie> cookieMap;
@@ -272,7 +273,9 @@ public virtual class ListViewController {
      * wrap the records as needed for display to the page.
      * </p>
      */
-    public virtual void resetRecordList() {}
+    public virtual void resetRecordList() {
+        recordList = setCon.getRecords();
+    }
     
     // SetCon overrides
     // Calls resetRecordList after every setCon action
