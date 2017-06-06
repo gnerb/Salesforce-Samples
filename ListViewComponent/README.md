@@ -8,7 +8,7 @@ sets, supressable columns, and pagination features. The only change to the
 component exists on the Visualforce side. All of the functionality up til this 
 point exists within the provided list view controller.
 
-# Complete Contact Sample (In Progress)
+# Complete Contact Sample (319 sloc)
 This sample contains an additional component showing that the ListViewController
 is type independant. Also included is a more advanced override of the
 resetRecordList method showing how to use it to wrap the records and perform
