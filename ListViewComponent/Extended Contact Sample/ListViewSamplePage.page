@@ -1,0 +1,22 @@
+<apex:page controller="ListViewSamplePageController">
+    <style>
+        /* The SFDC provided class of active tabs */
+        .rich-tab-active {
+        background-image:none;
+        }
+        
+        /* The SFDC provided class for inactive tabs */
+        .rich-tab-inactive {
+        background-image:none;
+        background-color:rgb(200,200,200);
+        }
+    </style>
+    <apex:tabPanel>
+        <apex:tab label="All Contacts">
+            <c:ContactListView queryString="{!allContactQuery}" suppressEmail="true"/>
+        </apex:tab>
+        <apex:tab label="My Contacts">
+            <c:ContactListView queryString="{!myContactQuery}" />
+        </apex:tab>
+    </apex:tabPanel>
+</apex:page>

@@ -1,0 +1,95 @@
+<apex:component controller="contactListViewController">
+    <apex:attribute name="queryString" type="String" description="" assignTo="{!queryAttr}"/>
+    
+    <apex:attribute name="suppressFirstName" type="Boolean" description="" default="false" />
+    <apex:attribute name="suppressLastName" type="Boolean" description="" default="false" />
+    <apex:attribute name="suppressEmail" type="Boolean" description="" default="false" />
+    
+    <style>
+        .column {
+        width:33%;
+        background-color:white;
+        }
+        
+        .table {
+        border-collapse:collapse;
+        width:100%;
+        }
+        
+        .table td {
+        border:1px solid #555;
+        padding:2px;
+        text-indent:2px;
+        }
+        
+        .table th {
+        border:1px solid #555;
+        text-indent:2px;
+        }
+        
+        .table th a {
+        text-decoration:none;
+        }
+    </style>
+    <apex:outputPanel id="listView">
+        <apex:form style="text-align:center;">
+            <apex:commandLink action="{!setConPrev}" value="<< Prev" style="float:left;margin-top:3px;"
+                              rendered="{!setCon.HasPrevious}" reRender="listView" />
+            <apex:outputText value="Page Size " />
+            <apex:selectList label="Page Size" value="{!pageSize}" size="1"
+                             style="margin-top:2px;margin-bottom:2px;">
+                <apex:actionSupport event="onchange" reRender="listView"/>
+                <apex:selectOption itemValue="5" itemLabel="5" />
+                <apex:selectOption itemValue="10" itemLabel="10" />
+                <apex:selectOption itemValue="25" itemLabel="25" />
+            </apex:selectList>
+            <apex:commandLink action="{!setConNext}" value="Next >>" style="float:right;margin-top:3px;"
+                              rendered="{!setCon.HasNext}" reRender="listView" />
+        </apex:form>
+        <apex:form>
+            <apex:dataTable value="{!contacts}" var="c" styleClass="table">
+                <apex:column styleClass="column" rendered="{!NOT(suppressFirstName)}">
+                    {!c.FirstName}
+                    <apex:facet name="header">
+                        <apex:commandLink reRender="listView">
+                            <apex:param name="contactName" assignTo="{!sortField}" value="FirstName"/>
+                            First Name&nbsp;
+                        </apex:commandLink>
+                    </apex:facet>
+                </apex:column>
+                <apex:column styleClass="column" rendered="{!NOT(suppressLastName)}">
+                    {!c.LastName}
+                    <apex:facet name="header">
+                        <apex:commandLink reRender="listView">
+                            <apex:param name="contactName" assignTo="{!sortField}" value="LastName"/>
+                            Last Name&nbsp;
+                        </apex:commandLink>
+                    </apex:facet>
+                </apex:column>
+                <apex:column styleClass="column" rendered="{!NOT(suppressEmail)}">
+                    {!c.Email}
+                    <apex:facet name="header">
+                        <apex:commandLink reRender="listView">
+                            <apex:param name="contactName" assignTo="{!sortField}" value="Email"/>
+                            Email&nbsp;
+                        </apex:commandLink>
+                    </apex:facet>
+                </apex:column>
+            </apex:dataTable>
+        </apex:form>
+        <apex:form style="text-align:center;">
+            <apex:commandLink action="{!setConPrev}" value="<< Prev" style="float:left;margin-top:3px;"
+                              rendered="{!setCon.HasPrevious}" reRender="listView" />
+            <apex:outputText value="Page Size " />
+            <apex:selectList label="Page Size" value="{!pageSize}" size="1"
+                             style="margin-top:2px;margin-bottom:2px;">
+                <apex:actionSupport event="onchange" reRender="listView"/>
+                <apex:selectOption itemValue="5" itemLabel="5" />
+                <apex:selectOption itemValue="10" itemLabel="10" />
+                <apex:selectOption itemValue="25" itemLabel="25" />
+            </apex:selectList>
+            <apex:commandLink action="{!setConNext}" value="Next >>" style="float:right;margin-top:3px;"
+                              rendered="{!setCon.HasNext}" reRender="listView" />
+        </apex:form>
+    </apex:outputPanel>
+</apex:component>
