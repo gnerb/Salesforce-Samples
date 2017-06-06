@@ -11,12 +11,18 @@
         background-color:rgb(200,200,200);
         }
     </style>
-    <apex:tabPanel>
+    <apex:tabPanel >
         <apex:tab label="All Contacts">
             <c:ContactListView queryString="{!allContactQuery}" suppressEmail="true"/>
         </apex:tab>
         <apex:tab label="My Contacts">
             <c:ContactListView queryString="{!myContactQuery}" />
+        </apex:tab>
+        <apex:tab label="All Accounts">
+            <c:accountlistview queryString="{!allAccountQuery}" />
+        </apex:tab>
+        <apex:tab label="My Accounts">
+        	<c:accountlistview queryString="{!myAccountQuery}" suppressTickerSymbol="true"/>
         </apex:tab>
     </apex:tabPanel>
 </apex:page>

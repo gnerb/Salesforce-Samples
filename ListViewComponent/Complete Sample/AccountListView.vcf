@@ -1,12 +1,12 @@
-<apex:component controller="contactListViewController">
+<apex:component controller="AccountListViewController">
     <apex:includeScript value="https://code.jquery.com/jquery-3.2.1.min.js" />
     
     <apex:attribute name="queryString" type="String" description="" assignTo="{!queryAttr}"/>
     
     <apex:attribute name="suppressSelection" type="Boolean" description="" default="false" />
-    <apex:attribute name="suppressFirstName" type="Boolean" description="" default="false" />
-    <apex:attribute name="suppressLastName" type="Boolean" description="" default="false" />
-    <apex:attribute name="suppressEmail" type="Boolean" description="" default="false" />
+    <apex:attribute name="suppressName" type="Boolean" description="" default="false" />
+    <apex:attribute name="suppressIndustry" type="Boolean" description="" default="false" />
+    <apex:attribute name="suppressTickerSymbol" type="Boolean" description="" default="false" />
     
     <style>
         .column {
@@ -40,37 +40,37 @@
             <div id="toolbar" style="text-align:center;">
                 <apex:commandButton value="Select" reRender="selection" />
             </div>
-            <apex:dataTable value="{!contacts}" var="c" styleClass="table">
+            <apex:dataTable value="{!accounts}" var="a" styleClass="table">
                 <apex:column style="width:25px;" rendered="{!NOT(suppressSelection)}">
-                	<apex:inputCheckbox value="{!c.selected}" styleClass="findMe" />
+                	<apex:inputCheckbox value="{!a.selected}" styleClass="findMe" />
                     <apex:facet name="header">
                         <apex:inputCheckbox onchange="selectAll(this);" />
                     </apex:facet>
                 </apex:column>
-                <apex:column styleClass="column" rendered="{!NOT(suppressFirstName)}">
-                    {!c.Record.FirstName}
+                <apex:column styleClass="column" rendered="{!NOT(suppressName)}">
+                    {!a.Record.Name}
                     <apex:facet name="header">
                         <apex:commandLink reRender="listView">
-                            <apex:param name="contactName" assignTo="{!sortField}" value="FirstName"/>
-                            First Name&nbsp;
+                            <apex:param name="contactName" assignTo="{!sortField}" value="Name"/>
+                            Name&nbsp;
                         </apex:commandLink>
                     </apex:facet>
                 </apex:column>
-                <apex:column styleClass="column" rendered="{!NOT(suppressLastName)}">
-                    {!c.Record.LastName}
+                <apex:column styleClass="column" rendered="{!NOT(suppressIndustry)}">
+                    {!a.Record.Industry}
                     <apex:facet name="header">
                         <apex:commandLink reRender="listView">
-                            <apex:param name="contactName" assignTo="{!sortField}" value="LastName"/>
-                            Last Name&nbsp;
+                            <apex:param name="contactName" assignTo="{!sortField}" value="Industry"/>
+                            Industry&nbsp;
                         </apex:commandLink>
                     </apex:facet>
                 </apex:column>
-                <apex:column styleClass="column" rendered="{!NOT(suppressEmail)}">
-                    {!c.Record.Email}
+                <apex:column styleClass="column" rendered="{!NOT(suppressTickerSymbol)}">
+                    {!a.Record.TickerSymbol }
                     <apex:facet name="header">
                         <apex:commandLink reRender="listView">
-                            <apex:param name="contactName" assignTo="{!sortField}" value="Email"/>
-                            Email&nbsp;
+                            <apex:param name="contactName" assignTo="{!sortField}" value="TickerSymbol"/>
+                            TickerSymbol &nbsp;
                         </apex:commandLink>
                     </apex:facet>
                 </apex:column>
@@ -93,7 +93,7 @@
     </apex:outputPanel>
     <apex:outputPanel id="selection">
         <apex:pageBlock title="Selected Items">
-        	{!selectedContacts}
+        	{!selectedAccounts}
         </apex:pageBlock>
     </apex:outputPanel>
 </apex:component>
