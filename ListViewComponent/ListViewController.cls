@@ -265,13 +265,11 @@ public virtual class ListViewController {
      * Resets the recordlist that is actually displayed to the page.
      *
      * <p>
-     * Often times with list views in VF you will need to wrap your records
-     * in a custom class to allow for selecting records. Because of this,
-     * setCon.getRecords is not used to display the records to the VF page.
-     * Instead, this class allows the developer to create his/her own record list
-     * to be displayed. This method runs logic that should be used to convert or
-     * wrap the records as needed for display to the page.
+     * The standbard behavior is to simply retrive the records from the standard
+     * set controller. This behavior can be overridden for more advanced
+     * appliations.
      * </p>
+     *
      */
     public virtual void resetRecordList() {
         recordList = setCon.getRecords();
