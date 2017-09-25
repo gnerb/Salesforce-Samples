@@ -17,7 +17,6 @@ public class CalendarInvite {
     public static final string DESCRIPTION_NAME = 'X-ALT-DESC';
     public static final string FMTTYPE_NAME = 'FMTTYPE';
     
-    // Defaults are probably unecessary...
     private static final string DEFAULT_VERSION = '2.0';
     private static final string DEFAULT_SUBJECT = 'BeyondTrust Event';
     private static final string DEFAULT_DESCRIPTION = '';
@@ -45,10 +44,7 @@ public class CalendarInvite {
         
         private set;
     }
-    
-    public INVITE_TYPE inviteType {get; set;}
 
-    // For the time being, use the shortcut methods.
     public CalendarInvite() {}
     
     public String serialize() {
@@ -101,7 +97,6 @@ public class CalendarInvite {
             ));
         }
         
-        // Grr, fails
         newEvent.attributes.put('ATTENDEES', attendees);
             
         nci.invite.components.put(INVITE_TYPE.VEVENT.name(), newEvent);
@@ -109,6 +104,9 @@ public class CalendarInvite {
         return nci;
     }
     
+    /*
+     * Converts a date-time object into a standardized string
+     */
     private static String formatDateTime(DateTime dt) {
         String result = dt.formatGMT('yyyyMMddHHmmss');
         result = result.left(8) + 'T' + result.right(6) + 'Z';
@@ -123,9 +121,9 @@ public class CalendarInvite {
         public String name; //BEGIN:NAME and END:NAME
         
         /* 
-         * This components attributes
+         * This component's attributes
          * 
-         * Note: Attributes could be a single attribute or a list of duplicate attributes
+         * Note: Attributes could be a single attribute or a list of duplicate attributes (Attendees)
          */ 
         public Map<String, object> attributes; 
         public Map<String, Component> components;// sub componenets
