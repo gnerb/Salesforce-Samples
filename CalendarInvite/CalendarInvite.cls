@@ -197,7 +197,7 @@ public class CalendarInvite {
     /*
      * An attibute is a single line in the markup file that follows the format:
      * Name;propert=value;property=value:value or Name:value
-     *.
+     */
     public class Attribute {
         public String name;
         public String value;
