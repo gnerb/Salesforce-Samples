@@ -32,7 +32,10 @@ public class CalendarInvite {
     public enum INVITE_TYPE {VEVENT, VJOURNAL, VTODO}
     public enum INVITE_ATTRIBUTE {TZ, VERSION}
     
-    // The actual invite
+    /*
+     * This is where the actual invite is stored. Internal methods work on this
+     * invite.
+     */
     public Component invite {
         get {
             if (invite == null) {
@@ -45,13 +48,30 @@ public class CalendarInvite {
         private set;
     }
 
+    /*
+     * Empty constructor. Use this to manually creat the invite.
+     */
     public CalendarInvite() {}
     
+    /*
+     * Shortcut to invite.serialize();
+     */
     public String serialize() {
         return invite.serialize();
     }
     
-    // For quickly creating events (most common type, with most common attributes)
+    /*
+     * Method to create a calendar invite of the type "VEVENT".
+     *
+     * @param String The subject of the event
+     * @param String The description of the event
+     * @param String The location of the event
+     * @param Set<Id> A set of Ids for any contacts that should be included in the event
+     * @param Set<Id> A set of Ids for any users that should be included in the event
+     * @param DateTime The Starting Date/Time for the event
+     * @param DateTime The Ending Date/Time for the event
+     * @ return CalendarInvite a new instance of a CalendarInvite class representing the event
+     */
     public static CalendarInvite quickEvent(string subject, string description, string location, 
         Set<Id> contactList, Set<Id> userList, DateTime startTime, 
         DateTime endTime) {
@@ -65,9 +85,6 @@ public class CalendarInvite {
             new Attribute(INVITE_ATTRIBUTE.TZ.name(), DEFAULT_TIMEZONE));
         
         newEvent.attributes.put(CLASS_NAME, new Attribute(CLASS_NAME, DEFAULT_CLASS));
-        // new Map<String, String>{LANGUAGE_NAME => DEFAULT_LANGUAGE}
-        // I don't believe language is required, if we provide for summary, need to provide for loc and
-        // description too
         newEvent.attributes.put(SUMMARY_NAME, new Attribute(SUMMARY_NAME, subject));
         newEvent.attributes.put(DESCRIPTION_NAME, new Attribute(DESCRIPTION_NAME, description, new Map<String, String>{
             FMTTYPE_NAME => DEFAULT_FMTTYPE
@@ -105,7 +122,8 @@ public class CalendarInvite {
     }
     
     /*
-     * Converts a date-time object into a standardized string
+     * Converts a date-time object into a standardized string:
+     * Ex. 20170911T205555Z
      */
     private static String formatDateTime(DateTime dt) {
         String result = dt.formatGMT('yyyyMMddHHmmss');
@@ -114,8 +132,17 @@ public class CalendarInvite {
     }
     
     /*
-     * Has begin and end tags and contains a list of attributes
-     * and components
+     * The invite is a markup language file that shares many features with xml
+     * A component is defined as having start and end tags that encompass nested
+     * attributes (Map<String, Object>). The invite itself is a componenet, with 
+     * attributes and nested components. Begin and end tags follow the format:
+     * BEGIN:NAME and END:NAME
+     *
+     * <p> 
+     * Note: The component may have more than one attribute that share a name.
+     * The invite stores these as a Map<String, List<Attribute>. Most notably,
+     * attendees fall under this category.
+     * </p>
      */
     public class Component {
         public String name; //BEGIN:NAME and END:NAME
@@ -167,6 +194,10 @@ public class CalendarInvite {
         }
     }
 
+    /*
+     * An attibute is a single line in the markup file that follows the format:
+     * Name;propert=value;property=value:value or Name:value
+     *.
     public class Attribute {
         public String name;
         public String value;
