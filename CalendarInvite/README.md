@@ -9,22 +9,22 @@ and downloaded or blobified and attached to an email.
 **In it's current state the class supports all invite types as long as the developer
 knows the components and attributes that are required for the desired invite.**
 
-With that in mind, this class is under development. THe goal is to simplify creating
+With that in mind, this class is under development. The goal is to simplify creating
 calendar invites so that developers who are not familliar with the standard can
 use it to create invites quickly and easily.
 
 Presently, only event's are supported for quick and easy creation. This seems to
-be the most common invite type (most clinet's dont even support the others).
+be the most common invite type (most client's don't even support the others).
 
 ## Default Values for Quick Event
 
-Quick Events come with many attributes assumed. These should server 80% of use
+Quick Events come with many attributes assumed. These should cover 80% of use
 cases without much issue.
 
 ## Timezone
 
-The quick event class automatically sets the timezone to utc. This is because
-sfdc stores date-times in utc so conversion is minimal. Email clients see the UTC
+The quick event class automatically sets the timezone to UTC. This is because
+SFDC stores date-times in utc so conversion is minimal. Email clients see the UTC
 timezone and automatically convert it to the timezone of the recipient. This also
 cuts way back on code and simplifies the serialized invite as no timezone definition
 is required.
@@ -52,8 +52,10 @@ However, gmail will honor Microsoft's HTML description to some extent
 
 -- Google will display the HTML description in the email invite, but not in the 
 calendar
+
 -- Google will strip HTML from the description and display the raw text in the
 calendar
+
 -- Google will convert URL's in the calender to clikable links automatically
 
 While I haven't tested on Mac's iCalendar, the most consistent way of providing
