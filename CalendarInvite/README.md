@@ -65,7 +65,7 @@ will prioritize this over the HTML description, the HTML description supports
 plain text).
 
 As mentioend above, this class does support using the plain text description if
-required, however, onlt the HTML description is supported in the quickEvent
+required, however, only the HTML description is supported in the quickEvent
 method.
 
 # Visualforce Excample
