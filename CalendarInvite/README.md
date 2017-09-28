@@ -43,7 +43,7 @@ Public
 
 ## Description
 
-This example shows how to add a link to the description. Most clients will automatically
+These examples show how to add a link to the description. Most clients will automatically
 convert the provided url into a link with no formatting required.
 
 # Visualforce Excample
@@ -55,14 +55,13 @@ public class CalendarTestController {
     public string ci {get; set;}
     
     public CalendarTestController() {
-        Set<Id> users = new Set<Id>();
-        users.add(userInfo.getUserId());
+        List<SObject> recipients = [<query for users contacts etc>];
+        
         ci = CalendarInvite.quickEvent(
             'Party Time',
             'http://google.com',
             'Friggin Everywhere',
-            new Set<Id>(),
-            users,
+            recipients,
             system.now(),
             system.now().addhours(3)
         ).serialize();
