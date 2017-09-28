@@ -16,6 +16,22 @@ use it to create invites quickly and easily.
 Presently, only event's are supported for quick and easy creation. This seems to
 be the most common invite type (most client's don't even support the others).
 
+## Client Support
+
+### Outlook
+
+This was designed and tested primarily in outlook and should work fairly well.
+
+### Google
+
+Google will allow for scheduling of invites; however, canceling or updating do not
+seem to work as Google changes the UID of the event once it is scheduled and for
+for some reason will not honor the original UID.
+
+### Mac - iCalendar
+
+This is not been tested in mac clients.
+
 ## Default Values for Quick Event
 
 Quick Events come with many attributes assumed. These should cover 80% of use
