@@ -1,7 +1,8 @@
 public class CalendarInvite {
-    private static String NEWLINE = '\n';
+    private static String NEWLINE = '\r\n';
     
-    // Parameter names - Note, converting to enums for strict enforcement
+    // Parameter names - Note, considering enums but they 1) take more characters to use
+    // and 2) don't seem to auto-complete as well as finals
     public static final string INVITE_NAME = 'VCALENDAR';
     public static final string STARTTIME_NAME = 'DTSTART';
     public static final string ENDTIME_NAME = 'DTEND';
@@ -14,8 +15,18 @@ public class CalendarInvite {
     public static final string RSVP_NAME = 'RSVP';
     public static final string COMMON_NAME = 'CN';
     public static final string CLASS_NAME = 'CLASS';
-    public static final string DESCRIPTION_NAME = 'X-ALT-DESC';
+    public static final string DESCRIPTION_NAME = 'DESCRIPTION';
     public static final string FMTTYPE_NAME = 'FMTTYPE';
+    public static final string DTSTAMP_NAME = 'DTSTAMP';
+    public static final string UID_NAME = 'UID';
+    public static final string ORGANIZER_NAME = 'ORGANIZER';
+    public static final string STATUS_NAME = 'STATUS';
+    public static final string SEQUENCE_NAME = 'SEQUENCE';
+    public static final string PRODID_NAME = 'PRODID';
+    public static final string VERSION_NAME = 'VERSION';
+    public static final string TIMEZONE_NAME = 'TZ';
+    public static final string EVENT_NAME = 'VEVENT';
+    public static final string METHOD_NAME = 'METHOD';
     
     private static final string DEFAULT_VERSION = '2.0';
     private static final string DEFAULT_SUBJECT = 'BeyondTrust Event';
@@ -28,9 +39,9 @@ public class CalendarInvite {
     private static final string DEFAULT_CLASS = 'PUBLIC';
     private static final string DEFAULT_FMTTYPE = 'text/html';
     private static final string DEFAULT_TIMEZONE = '+00';
-    
-    public enum INVITE_TYPE {VEVENT, VJOURNAL, VTODO}
-    public enum INVITE_ATTRIBUTE {TZ, VERSION}
+    private static final string DEFAULT_DTSTAMP = formatDateTime(system.now());
+    private static final string DEFAULT_PRODID = system.URL.getSalesforceBaseUrl().getHost();
+    private static final string DEFAULT_UID = formatDateTime(system.now()) + '@' + DEFAULT_PRODID;
     
     /*
      * This is where the actual invite is stored. Internal methods work on this
@@ -49,7 +60,7 @@ public class CalendarInvite {
     }
 
     /*
-     * Empty constructor. Use this to manually creat the invite.
+     * Empty constructor. Use this to manually create the invite.
      */
     public CalendarInvite() {}
     
@@ -58,6 +69,24 @@ public class CalendarInvite {
      */
     public String serialize() {
         return invite.serialize();
+    }
+    
+    
+    public static CalendarInvite quickEvent(string subject, string description, string location, 
+        SObject recipient, DateTime startTime, DateTime endTime) {
+        List<SObject> recipients = new List<SObject>{recipient};
+        return quickEvent(subject, description, location, recipients, startTime, endTime, null, null);
+    }
+    
+    public static CalendarInvite quickEvent(string subject, string description, string location, 
+        List<SObject> recipients, DateTime startTime, DateTime endTime) {
+        return quickEvent(subject, description, location, recipients, startTime, endTime, null, null);
+    }
+    
+    public static CalendarInvite quickEvent(string subject, string description, string location, 
+        SObject recipient, DateTime startTime, DateTime endTime, String uid, SObject organizer) {
+        List<SObject> recipients = new List<SObject>{recipient};
+        return quickEvent(subject, description, location, recipients, startTime, endTime, uid, organizer);
     }
     
     /*
@@ -70,64 +99,142 @@ public class CalendarInvite {
      * @param Set<Id> A set of Ids for any users that should be included in the event
      * @param DateTime The Starting Date/Time for the event
      * @param DateTime The Ending Date/Time for the event
+     * @param String The unique ID for the invite, required for updating/canceling events. Default system.now(), recommended to use record Id
+     * @param SObject A record containing a valid 'Email' and 'Name' field to set as the organizer (user, queue, contact, etc)
      * @ return CalendarInvite a new instance of a CalendarInvite class representing the event
      */
     public static CalendarInvite quickEvent(string subject, string description, string location, 
-        Set<Id> contactList, Set<Id> userList, DateTime startTime, 
-        DateTime endTime) {
+        List<SObject> recipients, DateTime startTime, DateTime endTime, String uid, SObject organizer) {
+        uid = uid == null ? DEFAULT_UID : uid + '@' + DEFAULT_PRODID;
         CalendarInvite nci = new CalendarInvite();
-        Component newEvent = new Component(INVITE_TYPE.VEVENT.name());
+        Component newEvent = new Component(EVENT_NAME);
         List<Attribute> attendees = new List<Attribute>();
-            
-        nci.invite.attributes.put(INVITE_ATTRIBUTE.VERSION.name(), 
-            new Attribute(INVITE_ATTRIBUTE.VERSION.name(), DEFAULT_VERSION));
-        nci.invite.attributes.put(INVITE_ATTRIBUTE.TZ.name(), 
-            new Attribute(INVITE_ATTRIBUTE.TZ.name(), DEFAULT_TIMEZONE));
+
+        nci.invite.attributes.put(VERSION_NAME, new Attribute(VERSION_NAME, DEFAULT_VERSION));
+        nci.invite.attributes.put(TIMEZONE_NAME, new Attribute(TIMEZONE_NAME, DEFAULT_TIMEZONE));
+        nci.invite.attributes.put(PRODID_NAME, new Attribute(PRODID_NAME, DEFAULT_PRODID));
+        nci.invite.attributes.put(METHOD_NAME, new CalendarInvite.Attribute(METHOD_NAME, 'REQUEST'));
         
+        newEvent.attributes.put(UID_NAME, new Attribute(UID_NAME, uid));
+            
+        if (organizer != null) {
+            Attribute tempAtt = getOrganizerAttribute(organizer);
+            newEvent.attributes.put(tempAtt.name, tempAtt);
+        }
+        
+        newEvent.attributes.put(DTSTAMP_NAME, new Attribute(DTSTAMP_NAME, DEFAULT_DTSTAMP));
         newEvent.attributes.put(CLASS_NAME, new Attribute(CLASS_NAME, DEFAULT_CLASS));
         newEvent.attributes.put(SUMMARY_NAME, new Attribute(SUMMARY_NAME, subject));
-        newEvent.attributes.put(DESCRIPTION_NAME, new Attribute(DESCRIPTION_NAME, description, new Map<String, String>{
-            FMTTYPE_NAME => DEFAULT_FMTTYPE
-        }));
+        newEvent.attributes.put(DESCRIPTION_NAME, new Attribute(DESCRIPTION_NAME, description));
         newEvent.attributes.put(LOCATION_NAME, new Attribute(LOCATION_NAME, location));
         newEvent.attributes.put(STARTTIME_NAME, new Attribute(STARTTIME_NAME, formatDateTime(starttime)));
         newEvent.attributes.put(ENDTIME_NAME, new Attribute(ENDTIME_NAME, formatDateTime(endtime)));
         newEvent.attributes.put(TRANSPARENT_NAME, new Attribute(TRANSPARENT_NAME, DEFAULT_TRANSPARENT));
-            
-        for (Contact c : [SELECT Name, Email FROM Contact WHERE Id IN :contactList]) {
+        
+        for (SObject so : recipients) {
             attendees.add(new Attribute(
-            	ATTENDEE_NAME,
-                c.email,
+                ATTENDEE_NAME,
+                (String) so.get('email'),
                 new Map<String, String> {
-                    COMMON_NAME => c.name
-                }
-            ));
-        }
-            
-        for (User u : [SELECT Name, Email FROM User WHERE Id IN :UserList]) {
-            attendees.add(new Attribute(
-            	ATTENDEE_NAME,
-                u.email,
-                new Map<String, String> {
-                    COMMON_NAME => u.name
-                }
+                    COMMON_NAME => (String) so.get('name')
+                        }
             ));
         }
         
         newEvent.attributes.put('ATTENDEES', attendees);
             
-        nci.invite.components.put(INVITE_TYPE.VEVENT.name(), newEvent);
+        nci.invite.components.put(EVENT_NAME, newEvent);
         
         return nci;
+    }
+    
+    /*
+     * Method to cancel event identified by provied uid. I'm not entirely sure
+     * if organizer is required yet. The idea is that if the invite does not contain
+     * the correct organizer, the invite might be coming from someone who does not have
+     * permission to edit or cancel the event. Also note, a phony DTSTART attribute is
+     * added for validation purposees.
+     * 
+     * @param String The uid for the event to be cancled. Idealy, this is stored on the
+     * record related to the event and generated via the supplied generateUID() method.
+     * @param SObject The record containing a valid 'email' and 'name' field (user, queue, etc)
+     * that represents the organizer of the event.
+     */
+    public static CalendarInvite cancelEvent(String uid, SObject organizer) {
+        CalendarInvite nci = new CalendarInvite();
+        Component newEvent = new Component(EVENT_NAME);
+        
+        if (uid != null) {
+            uid += '@' + DEFAULT_PRODID;
+        } else {
+            throw new CalendarInviteException('Must provide UID of event to cancel');
+        }
+        
+        nci.invite.attributes.put(VERSION_NAME, new Attribute(VERSION_NAME, DEFAULT_VERSION));
+        nci.invite.attributes.put(TIMEZONE_NAME, new Attribute(TIMEZONE_NAME, DEFAULT_TIMEZONE));
+        nci.invite.attributes.put(PRODID_NAME, new Attribute(PRODID_NAME, DEFAULT_PRODID));
+        nci.invite.attributes.put(METHOD_NAME, new Attribute(METHOD_NAME, 'CANCEL'));
+        
+        newEvent.attributes.put(UID_NAME, new Attribute(UID_NAME, uid));
+        newEvent.attributes.put(SEQUENCE_NAME, new Attribute(SEQUENCE_NAME, '99'));
+        // Required for ics validation, not sure if this needs to match the actual event start time or not
+        newEvent.attributes.put(STARTTIME_NAME, new Attribute(STARTTIME_NAME, formatDateTime(system.now())));
+        
+        if (organizer != null) {
+            Attribute tempAtt = getOrganizerAttribute(organizer);
+            newEvent.attributes.put(tempAtt.name, tempAtt);
+        }
+        
+        newEvent.attributes.put(DTSTAMP_NAME, new Attribute(DTSTAMP_NAME, DEFAULT_DTSTAMP));
+        newEvent.attributes.put(CLASS_NAME, new Attribute(CLASS_NAME, DEFAULT_CLASS));
+        newEvent.attributes.put(STATUS_NAME, new Attribute(STATUS_NAME, 'CANCELLED'));
+        newEvent.attributes.put(SEQUENCE_NAME, new CalendarInvite.Attribute(SEQUENCE_NAME, '99'));
+        
+        nci.invite.components.put(EVENT_NAME, newEvent);
+        
+        return nci;
+    }
+    
+    /*
+     * A method to generate a unique UID for the event. Using this method
+     * provides a very unique identifier to help ensure that it is globally unique.
+     * Since this method relies on date/time, it is recommended to store the uid on
+     * the record it pertains to for reference at a later time (updates or cancelations)
+     * 
+     * @param Id The id of the record the event pertains to
+     * @param Id The id of the recipient of the invite.
+     * @return String A globally unique ID for the event
+     */
+    public static String generateUID(Id recordId, Id recipientId) {
+        return (String) recordId + (String) recipientId +
+            formatDateTime(system.now()) + '@' + DEFAULT_PRODID;
     }
     
     /*
      * Converts a date-time object into a standardized string:
      * Ex. 20170911T205555Z
      */
-    private static String formatDateTime(DateTime dt) {
+    public static String formatDateTime(DateTime dt) {
         String result = dt.formatGMT('yyyyMMddHHmmss');
         result = result.left(8) + 'T' + result.right(6) + 'Z';
+        return result;
+    }
+    
+    /*
+     * Helper method to generate an attribute for the organizer since
+     * this code appears more than once.
+     */
+    private static Attribute getOrganizerAttribute(SObject organizer) {
+        Attribute result;
+        
+        if (organizer != null) {
+            result = new Attribute(ORGANIZER_NAME, (String) organizer.get('email'), 
+                new Map<String, String>{
+                    COMMON_NAME => (String) organizer.get('name')
+                }
+            );
+        }
+        
         return result;
     }
     
