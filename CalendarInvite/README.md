@@ -43,30 +43,8 @@ Public
 
 ## Description
 
-This one is a bit trickier to explain. In my testing, the standard description
-field is plain text. For my use cases, I needed to be able to put links into this
-field.
-
-I found that Microsoft Outlook supports HTML descriptions but GMail does not.
-However, gmail will honor Microsoft's HTML description to some extent
-
--- Google will display the HTML description in the email invite, but not in the 
-calendar
-
--- Google will strip HTML from the description and display the raw text in the
-calendar
-
--- Google will convert URL's in the calender to clikable links automatically
-
-While I haven't tested on Mac's iCalendar, the most consistent way of providing
-a description is to use Microsoft's proprietary description tag (not in the 
-standard) and ignoring the standard text-description entirely (as both clients 
-will prioritize this over the HTML description, the HTML description supports
-plain text).
-
-As mentioend above, this class does support using the plain text description if
-required, however, only the HTML description is supported in the quickEvent
-method.
+This example shows how to add a link to the description. Most clients will automatically
+convert the provided url into a link with no formatting required.
 
 # Visualforce Excample
 
@@ -81,7 +59,7 @@ public class CalendarTestController {
         users.add(userInfo.getUserId());
         ci = CalendarInvite.quickEvent(
             'Party Time',
-            '<a href="http://google.com">http://google.com</a>',
+            'http://google.com',
             'Friggin Everywhere',
             new Set<Id>(),
             users,
@@ -104,16 +82,16 @@ public class CalendarTestController {
 # Email Attachment Example
 
 ```
+List<SObject> recipients = [<query for users contacts etc>];
 Messaging.EmailFileAttachment invite = new Messaging.EmailFileAttachment();
 
 invite.filename = 'invite.cls';
-invite.inline = false; // note, I haven't tested email client support for true/false yet
+invite.inline = true;
 invite.body = blob.valueOf(CalendarInvite.quickEvent(
     'Party Time',
-    '<a href="http://google.com">http://google.com</a>',
+    'http://google.com',
     'Friggin Everywhere',
-    new Set<Id>(),
-    users,
+    recipients,
     system.now(),
     system.now().addhours(3)
 ).serialize());
