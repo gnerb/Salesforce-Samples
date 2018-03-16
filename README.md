@@ -12,3 +12,7 @@ This is a versitile code sample that demonstrates the follow:
 behaviors
 -Dynamic components that can be re-used to display multiple data sets
 -Type independant apex code
+
+# IDHelper
+
+A class that I developed a while back that caches commonly quereid for IDs to increase performance and reduce SOQL query usage.
