@@ -1,8 +1,6 @@
 # Salesforce Samples
 
 # Overview
-My first LWC.
-
 I wrote this primary as a learning tool and tried to get it to do as much as possible. This component was embeded into a community and into lightning record pages.
 
 I'm uploading this for later reference and in hopes of it helping others learn about LWC.
