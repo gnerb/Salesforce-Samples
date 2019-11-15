@@ -13,6 +13,10 @@ behaviors
 -Dynamic components that can be re-used to display multiple data sets
 -Type independant apex code
 
-# IDHelper
+# Contractor Search
 
-A class that I developed a while back that caches commonly quereid for IDs to increase performance and reduce SOQL query usage.
+My first LWC.
+
+I wrote this primary as a learning tool and tried to get it to do as much as possible. This component was embeded into a community and into lightning record pages.
+
+I'm uploading this for later reference and in hopes of it helping others learn about LWC.
