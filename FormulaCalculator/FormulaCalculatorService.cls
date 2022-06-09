@@ -49,10 +49,10 @@ public class FormulaCalculatorService {
     // Validation trigger or UI based when saving
     
     /*
-	 * Performs the calculation and returns the result.
-	 * 
-* @return String The result in string form. Can be converted by the caller. Hello {!quote.world__c} My name is {!quote.name}
-	 */
+     * Performs the calculation and returns the result.
+     * 
+     * @return String The result in string form. Can be converted by the caller. Hello {!quote.world__c} My name is {!quote.name}
+     */
     public static List<String> calculateFormulas(String stringToParse) {
         list<String> results;
         
@@ -269,9 +269,9 @@ public class FormulaCalculatorService {
         }
     }
 
-	/*
- 	 * Class for external use, should not be constructed or manipulated directly
- 	 */    
+    /*
+     * Class for external use, should not be constructed or manipulated directly
+     */    
     public virtual class FormulaValidationResult {
         public Boolean isValid {get; private set;}
         private List<String> messages;
